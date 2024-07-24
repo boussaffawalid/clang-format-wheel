@@ -18,6 +18,7 @@ ExternalProject_add(build-clang-format
   USES_TERMINAL_DOWNLOAD 1
   USES_TERMINAL_CONFIGURE 1
   USES_TERMINAL_BUILD 1
+  PATCH_COMMAND ${CMAKE_COMMAND} -E echo "Applying pmi patches ..."  && ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_LIST_DIR}/ClangFormat.cpp ${CMAKE_BINARY_DIR}/llvm-project/clang/tools/clang-format/ClangFormat.cpp
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DLLVM_ENABLE_ZLIB=OFF -DLLVM_ENABLE_ZSTD=OFF -DLLVM_ENABLE_PROJECTS=clang -DLLVM_TARGETS_TO_BUILD=
   BUILD_COMMAND ${CMAKE_COMMAND} --build . --target clang-format --config Release
 )
