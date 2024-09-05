@@ -2,12 +2,14 @@ cmake_minimum_required(VERSION 3.16...3.29)
 project(${SKBUILD_PROJECT_NAME} VERSION ${SKBUILD_PROJECT_VERSION})
 
 message(STATUS "clang-format-wheel version: ${SKBUILD_PROJECT_VERSION}")
-string(REGEX MATCH "^([0-9]+)\.([0-9]+)\.([0-9]+)" CLANG_FORMAT_VERSION "${SKBUILD_PROJECT_VERSION}")
-message(STATUS "clang-format version: ${CLANG_FORMAT_VERSION}")
+set (CLANG_FORMAT_VERSION "19.1.0-rc4")
 
 # Define a build rule clang-format
 set(LLVM_DOWNLOAD_URL "https://github.com/llvm/llvm-project/releases/download/llvmorg-${CLANG_FORMAT_VERSION}/llvm-project-${CLANG_FORMAT_VERSION}.src.tar.xz")
 include(ExternalProject)
+
+
+
 ExternalProject_add(build-clang-format
   URL "${LLVM_DOWNLOAD_URL}"
   SOURCE_SUBDIR llvm
@@ -18,6 +20,7 @@ ExternalProject_add(build-clang-format
   USES_TERMINAL_DOWNLOAD 1
   USES_TERMINAL_CONFIGURE 1
   USES_TERMINAL_BUILD 1
+  PATCH_COMMAND ${CMAKE_COMMAND} -E echo "Applying pmi patches ..."  && ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_LIST_DIR}/ClangFormat.cpp ${CMAKE_BINARY_DIR}/llvm-project/clang/tools/clang-format/ClangFormat.cpp
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DLLVM_ENABLE_ZLIB=OFF -DLLVM_ENABLE_ZSTD=OFF -DLLVM_ENABLE_PROJECTS=clang -DLLVM_TARGETS_TO_BUILD=
   BUILD_COMMAND ${CMAKE_COMMAND} --build . --target clang-format --config Release
 )
